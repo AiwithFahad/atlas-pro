@@ -4,6 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useMapStore } from '@/stores/mapStore';
 import { reverseGeocode } from '@/lib/geo';
+import { useTheme } from '@/hooks/use-theme';
 
 // Fix default marker icon
 const defaultIcon = L.icon({
@@ -33,6 +34,11 @@ const primaryIcon = L.divIcon({
   iconAnchor: [10, 10],
 });
 
+const TILE_URLS = {
+  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  light: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+};
+
 function MapSync() {
   const map = useMap();
   const center = useMapStore((s) => s.center);
@@ -53,7 +59,6 @@ function MapSync() {
 
 function MapClickHandler() {
   const addMarker = useMapStore((s) => s.addMarker);
-  const activePanel = useMapStore((s) => s.activePanel);
 
   useMapEvents({
     contextmenu: async (e) => {
@@ -83,6 +88,7 @@ export default function MapView() {
   const routeOrigin = useMapStore((s) => s.routeOrigin);
   const routeDestination = useMapStore((s) => s.routeDestination);
   const removeMarker = useMapStore((s) => s.removeMarker);
+  const { theme } = useTheme();
 
   return (
     <MapContainer
@@ -93,13 +99,13 @@ export default function MapView() {
       attributionControl={true}
     >
       <TileLayer
+        key={theme}
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        url={TILE_URLS[theme]}
       />
       <MapSync />
       <MapClickHandler />
 
-      {/* Route polyline */}
       {routeResult && (
         <Polyline
           positions={routeResult.coordinates}
@@ -113,7 +119,6 @@ export default function MapView() {
         />
       )}
 
-      {/* Route origin/destination markers */}
       {routeOrigin && (
         <Marker position={[routeOrigin.lat, routeOrigin.lng]} icon={createColoredIcon('#22c55e')}>
           <Popup>{routeOrigin.name}</Popup>
@@ -125,18 +130,16 @@ export default function MapView() {
         </Marker>
       )}
 
-      {/* Selected search location */}
       {selectedLocation && (
         <Marker position={[selectedLocation.lat, selectedLocation.lng]} icon={primaryIcon}>
           <Popup>{selectedLocation.name}</Popup>
         </Marker>
       )}
 
-      {/* User markers */}
       {markers.map((m) => (
         <Marker key={m.id} position={[m.lat, m.lng]} icon={createColoredIcon(m.color)}>
           <Popup>
-            <div style={{ color: 'white', minWidth: '120px' }}>
+            <div style={{ minWidth: '120px' }}>
               <strong>{m.name}</strong>
               <br />
               <small style={{ opacity: 0.7 }}>{m.lat.toFixed(5)}, {m.lng.toFixed(5)}</small>

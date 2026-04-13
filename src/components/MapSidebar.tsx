@@ -1,5 +1,6 @@
-import { Search, Navigation, MapPin, Layers, Locate, ZoomIn, ZoomOut } from 'lucide-react';
+import { Search, Navigation, MapPin, Locate, ZoomIn, ZoomOut, Sun, Moon } from 'lucide-react';
 import { useMapStore, type SidebarPanel } from '@/stores/mapStore';
+import { useTheme } from '@/hooks/use-theme';
 import SearchPanel from './SearchPanel';
 import RoutePanel from './RoutePanel';
 import PlacesPanel from './PlacesPanel';
@@ -16,6 +17,7 @@ export default function MapSidebar() {
   const setCenter = useMapStore((s) => s.setCenter);
   const setZoom = useMapStore((s) => s.setZoom);
   const zoom = useMapStore((s) => s.zoom);
+  const { theme, toggleTheme } = useTheme();
 
   const handleLocate = () => {
     if ('geolocation' in navigator) {
@@ -52,6 +54,9 @@ export default function MapSidebar() {
         ))}
 
         <div className="mt-auto space-y-1">
+          <button onClick={toggleTheme} className="nav-icon-btn" title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
           <button onClick={handleLocate} className="nav-icon-btn" title="My location">
             <Locate className="w-5 h-5" />
           </button>
