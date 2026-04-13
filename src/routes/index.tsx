@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 
 const MapView = lazy(() => import('@/components/MapView'));
 const MapSidebar = lazy(() => import('@/components/MapSidebar'));
@@ -16,17 +16,33 @@ export const Route = createFileRoute("/")({
   component: MapPage,
 });
 
+const LoadingFallback = () => (
+  <div className="w-full h-full flex items-center justify-center bg-background">
+    <div className="flex flex-col items-center gap-3">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <span className="text-sm text-muted-foreground">Loading map...</span>
+    </div>
+  </div>
+);
+
 function MapPage() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div className="relative w-screen h-screen overflow-hidden bg-background">
+        <LoadingFallback />
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-background">
-      <Suspense fallback={
-        <div className="w-full h-full flex items-center justify-center bg-background">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-muted-foreground">Loading map...</span>
-          </div>
-        </div>
-      }>
+      <Suspense fallback={<LoadingFallback />}>
         <MapView />
         <MapSidebar />
       </Suspense>
