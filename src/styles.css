@@ -264,5 +264,13 @@
   box-shadow: var(--glass-shadow) !important;
 }
 .leaflet-popup-tip {
-  background: oklch(0.15 0.02 260 / 70%) !important;
+  background: var(--glass-bg) !important;
+}
+
+/* Light mode leaflet overrides */
+:root .leaflet-control-attribution {
+  background: oklch(0.97 0.005 260 / 80%) !important;
+}
+:root .leaflet-container {
+  background: oklch(0.95 0.005 260) !important;
 }
