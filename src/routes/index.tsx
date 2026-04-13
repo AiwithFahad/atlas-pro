@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from 'react';
 
 const MapView = lazy(() => import('@/components/MapView'));
-import MapSidebar from '@/components/MapSidebar';
+const MapSidebar = lazy(() => import('@/components/MapSidebar'));
 
 export const Route = createFileRoute("/")({
   head: () => ({
