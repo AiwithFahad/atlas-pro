@@ -28,8 +28,8 @@ function MapPage() {
         </div>
       }>
         <MapView />
+        <MapSidebar />
       </Suspense>
-      <MapSidebar />
     </div>
   );
 }
